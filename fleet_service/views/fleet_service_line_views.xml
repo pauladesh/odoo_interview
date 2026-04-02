@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_fleet_service_line_tree" model="ir.ui.view">
+        <field name="name">fleet.service.line.tree</field>
+        <field name="model">fleet.service.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="fleet_service_id"/>
+                <field name="description"/>
+                <field name="quantity"/>
+                <field name="unit_price"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fleet_service_line_form" model="ir.ui.view">
+        <field name="name">fleet.service.line.form</field>
+        <field name="model">fleet.service.line</field>
+        <field name="arch" type="xml">
+            <form string="Service Line">
+                <sheet>
+                    <group>
+                        <field name="fleet_service_id"/>
+                        <field name="description"/>
+                        <field name="quantity"/>
+                        <field name="unit_price"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_fleet_service_line" model="ir.actions.act_window">
+        <field name="name">Service Lines</field>
+        <field name="res_model">fleet.service.line</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_fleet_service_root" name="Services" parent="fleet.menu_root" sequence="30"/>
+
+    <menuitem id="menu_fleet_service_record" name="Service Records" parent="menu_fleet_service_root" action="action_fleet_service_record" sequence="10"/>
+    <menuitem id="menu_fleet_service_line" name="Service Lines" parent="menu_fleet_service_root" action="action_fleet_service_line" sequence="20"/>
+    <menuitem id="menu_fleet_service_tag" name="Service Tags" parent="menu_fleet_service_root" action="action_fleet_service_tag" sequence="30"/>
+</odoo>
