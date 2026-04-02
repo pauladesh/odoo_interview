@@ -80,6 +80,18 @@ class FleetServiceRecord(models.Model):
         'fleet_service_id',
         string='Service Lines',
     )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.company,
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        related='company_id.currency_id',
+        string='Currency',
+        readonly=True,
+    )
     total_lines_cost = fields.Float(
         string='Total Lines Cost',
         compute='_compute_total_lines_cost',
@@ -93,6 +105,15 @@ class FleetServiceRecord(models.Model):
     duration_days = fields.Integer(
         string='Duration (Days)',
         compute='_compute_duration_days',
+        store=True,
+    )
+    vehicle_service_count = fields.Integer(
+        string='Vehicle Service Count',
+        compute='_compute_vehicle_service_count',
+    )
+    color = fields.Integer(
+        string='Color',
+        compute='_compute_color',
         store=True,
     )
 
@@ -116,6 +137,19 @@ class FleetServiceRecord(models.Model):
                 record.duration_days = (today - record.service_date).days
             else:
                 record.duration_days = 0
+
+    @api.depends('vehicle_id')
+    def _compute_vehicle_service_count(self):
+        for record in self:
+            if record.vehicle_id:
+                record.vehicle_service_count = self.search_count([('vehicle_id', '=', record.vehicle_id.id)])
+            else:
+                record.vehicle_service_count = 0
+
+    @api.depends('tag_ids', 'tag_ids.color')
+    def _compute_color(self):
+        for record in self:
+            record.color = record.tag_ids[:1].color or 0
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -179,3 +213,14 @@ class FleetServiceRecord(models.Model):
         if invalid_records:
             raise ValidationError(_('Only Cancelled services can be reset to Draft.'))
         self.write({'state': 'draft'})
+
+    def action_view_vehicle_services(self):
+        self.ensure_one()
+        return {
+            'name': _('Vehicle Service Records'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'fleet.service.record',
+            'view_mode': 'tree,kanban,form',
+            'domain': [('vehicle_id', '=', self.vehicle_id.id)],
+            'context': {'default_vehicle_id': self.vehicle_id.id},
+        }

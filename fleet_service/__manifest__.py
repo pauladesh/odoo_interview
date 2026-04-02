@@ -7,9 +7,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sequence.xml',
-        'views/fleet_service_record_views.xml',
-        'views/fleet_service_tag_views.xml',
-        'views/fleet_service_line_views.xml',
-        'views/fleet_service_menus.xml',
+        'views/fleet_service_views.xml',
+        'views/fleet_service_menu.xml',
     ],
 }
