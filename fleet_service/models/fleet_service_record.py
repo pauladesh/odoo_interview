@@ -160,7 +160,11 @@ class FleetServiceRecord(models.Model):
 
     def write(self, vals):
         protected_fields = {'cost', 'service_date'}
-        if protected_fields.intersection(vals) and self.filtered(lambda rec: rec.state == 'done'):
+        if (
+            protected_fields.intersection(vals)
+            and self.filtered(lambda rec: rec.state == 'done')
+            and not self.env.context.get('allow_completed_service_edit')
+        ):
             raise UserError(_('Completed service records cannot be modified.'))
         return super().write(vals)
 

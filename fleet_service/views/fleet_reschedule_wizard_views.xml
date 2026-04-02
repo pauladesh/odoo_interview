@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_fleet_reschedule_wizard_form" model="ir.ui.view">
+        <field name="name">fleet.reschedule.wizard.form</field>
+        <field name="model">fleet.reschedule.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Reschedule Services">
+                <group>
+                    <field name="service_ids" widget="many2many_tags"/>
+                    <field name="new_date"/>
+                    <field name="new_cost"/>
+                    <field name="reason"/>
+                </group>
+                <footer>
+                    <button name="confirm" string="Confirm Reschedule" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_fleet_reschedule_wizard" model="ir.actions.act_window">
+        <field name="name">Reschedule Selected</field>
+        <field name="res_model">fleet.reschedule.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_fleet_reschedule_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'default_service_ids': active_ids}</field>
+    </record>
+
+    <record id="server_action_reschedule_selected" model="ir.actions.server">
+        <field name="name">Reschedule Selected</field>
+        <field name="model_id" ref="model_fleet_service_record"/>
+        <field name="binding_model_id" ref="model_fleet_service_record"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Reschedule Selected',
+    'res_model': 'fleet.reschedule.wizard',
+    'view_mode': 'form',
+    'view_id': env.ref('fleet_service.view_fleet_reschedule_wizard_form').id,
+    'target': 'new',
+    'context': {'default_service_ids': [(6, 0, records.ids)]},
+}</field>
+    </record>
+</odoo>

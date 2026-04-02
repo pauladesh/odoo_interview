@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_fleet_service_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Fleet Service Report</h2>
+                        <table class="table table-sm table-borderless">
+                            <tr><td><strong>Service Reference</strong></td><td><span t-field="o.name"/></td></tr>
+                            <tr><td><strong>Vehicle</strong></td><td><span t-field="o.vehicle_id"/></td></tr>
+                            <tr><td><strong>Technician</strong></td><td><span t-field="o.technician_id"/></td></tr>
+                            <tr><td><strong>Date</strong></td><td><span t-field="o.service_date"/></td></tr>
+                            <tr><td><strong>Type</strong></td><td><span t-esc="dict(o._fields['service_type'].selection).get(o.service_type, '')"/></td></tr>
+                            <tr><td><strong>Cost</strong></td><td><span t-field="o.cost" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                            <tr><td><strong>State</strong></td><td><span t-esc="dict(o._fields['state'].selection).get(o.state, '')"/></td></tr>
+                        </table>
+
+                        <h4>Service Lines</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Line Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.service_line_ids" t-as="line">
+                                    <t t-set="line_total" t-value="line.quantity * line.unit_price"/>
+                                    <td><span t-field="line.description"/></td>
+                                    <td class="text-end"><span t-field="line.quantity"/></td>
+                                    <td class="text-end"><span t-field="line.unit_price" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><span t-out="line_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end"><strong><span t-field="o.total_lines_cost" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_fleet_service" model="ir.actions.report">
+        <field name="name">Fleet Service Report</field>
+        <field name="model">fleet.service.record</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">fleet_service.report_fleet_service_document</field>
+        <field name="report_file">fleet_service.report_fleet_service_document</field>
+        <field name="binding_model_id" ref="model_fleet_service_record"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
